@@ -17,7 +17,8 @@ Welcome to the **Animated Travel Landing Page**! This project is a visually appe
 
 ## 📷 Preview
 
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/72e00263-0597-4587-9070-f144b1fcb57c)
+
 *(Add an actual screenshot of your project here)*
 
 ## 🎬 Demo
