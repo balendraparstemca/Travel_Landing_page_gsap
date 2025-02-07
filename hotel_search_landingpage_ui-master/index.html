@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Booking Landing Page</title>
+  <link rel="stylesheet" href="css/font.css" />
+  <link rel="stylesheet" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    img {
+      position: absolute;
+      /* Ensure images are positioned relative to the screen */
+      width: '180px';
+      will-change: transform;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+
+        varying vec3 worldPosition;
+
+        void main() {
+
+            vec4 mPosition = modelMatrix * vec4( position, 1.0 );
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            worldPosition = mPosition.xyz;
+
+        }
+
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader">
+
+      uniform vec3 topColor;
+      uniform vec3 bottomColor;
+      uniform float offset;
+      uniform float exponent;
+
+      varying vec3 worldPosition;
+
+      void main() {
+
+          float h = normalize( worldPosition + offset ).y;
+          gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
+
+      }
+
+  </script>
+
+    <header id="header">
+      <nav>
+        <div class="menu">
+          <div class="logo">Travel <span>Agency</span> Name</div>
+          <ul>
+            <li>Room</li>
+            <li>Flight</li>
+            <li>Today's Deal</li>
+          </ul>
+        </div>
+        <div class="myAccount">
+          <div class="ctaGroup">
+            <div class="cta">Sign In</div>
+            <div class="cta active">Create Account</div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="hotel_content">
+
+      <div class="info">
+        <h2>Book hotels online</h2>
+        <p>Lorem ipsum dolor sit.</p>
+      </div>
+
+      <div class="booking_info">
+
+        <div class="opt">
+          <span class="active">Hotel</span>
+          <span>Homes</span>
+        </div>
+
+        <div class="booking_details">
+
+          <div class="item">
+            <i class="fa fa-search"></i>
+            Enter a destination
+          </div>
+
+          <div class="item">
+            <div class="date">31st Dec 2020 <i class="fa fa-angle-down"></i></div>
+            <div class="days">Thursday</div>
+          </div>
+
+          <div class="item">
+            <div class="date">31st Dec 2020 <i class="fa fa-angle-down"></i></div>
+            <div class="days">Thursday</div>
+          </div>
+
+          <div class="item">
+            <div class="people">2 adults, 0 children <i class="fa fa-angle-down"></i></div>
+            <div class="days">1 room</div>
+          </div>
+
+          <div class="item">
+            <div class="cta active">Search</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    <img src="images/london.png" class="hotel london active" alt="Image 1">
+    <img src="images/paris.png" class="hotel paris" alt="Image 2">
+    <img src="images/newyark.png" class="hotel" alt="Image 3">
+    <img src="images/balloon/bg.png" class="hotel london balloonbg" alt="Image 4">
+    <img id="road" src="images/road.png">
+    <img src="images/copter1.gif" class="plane2">
+    <img src="images/car1.png" class="car1">
+    <img src="images/car2.png" class="car2">
+    <img src="images/car3.png" class="car3">
+    <img src="images/car4.png" class="car4">
+    <img src="images/bus2.png" class="bus1">
+    <img src="images/scar2.png" class="scar2">
+    <img src="images/bus1.png" class="bus3">
+    <img src="images/scar1.png" class="scar4">
+    <img src="images/dog.gif" class="dog_1">
+    <img src="images/cloud.png" class="cloud">
+    <img src="images/cloud.png" class="cloud_2">
+    <img src="images/cloud.png" class="cloud_3">
+    <img src="images/cloud.png" class="cloud_4">
+
+  </div>
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js';
+
+    // Create scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Create the Sun
+    const sunGeometry = new THREE.SphereGeometry(1, 64, 64);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sun);
+
+    // Add a soft glow for the Sun using a halo effect
+    const textureLoader = new THREE.TextureLoader();
+    const glowTexture = textureLoader.load('./l.png');
+    const glowMaterial = new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: 0xffdd44,
+      transparent: true,
+      opacity: 0.4,
+    });
+    const sunGlow = new THREE.Sprite(glowMaterial);
+    sunGlow.scale.set(4, 4, 1); // Adjust the size of the glow
+    scene.add(sunGlow);
+
+    // Add a light source
+    const sunLight = new THREE.PointLight(0xffdd44, 1, 100);
+    scene.add(sunLight);
+
+    // Add a sky dome with shaders
+    const uniforms = {
+      topColor: { value: new THREE.Color(0x87ceeb) }, // Daytime sky blue
+      bottomColor: { value: new THREE.Color(0xf5deb3) }, // Horizon beige
+      offset: { value: 33 },
+      exponent: { value: 0.6 },
+    };
+
+    const skyGeo = new THREE.SphereGeometry(100, 32, 32);
+    const skyMat = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform float offset;
+        uniform float exponent;
+        varying vec3 vWorldPosition;
+        void main() {
+          float h = normalize(vWorldPosition + offset).y;
+          gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+        }
+      `,
+      uniforms: uniforms,
+      side: THREE.BackSide,
+    });
+
+    const sky = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(sky);
+
+    // Set initial camera position
+    camera.position.set(0, 5, 10);
+    camera.lookAt(0, 0, 0);
+
+    // Variables for the sun's position and animation
+    const radius = 14;
+    let time = 0;
+
+    // Animation loop
+    function animate() {
+      time += 0.002; // Adjust sun speed here
+
+      // Calculate sun position (circular arc)
+      const x = radius * Math.cos(time);
+      const y = radius * Math.sin(time);
+
+      sun.position.set(x, y, 0);
+      sunLight.position.set(x, y, 0);
+      sunGlow.position.set(x, y, 0);
+
+      // Adjust light intensity and glow opacity
+      const color = new THREE.Color();
+      if (y > 0) {
+        // Daytime
+        const intensity = y / radius; // Scale intensity
+        sunLight.intensity = intensity * 2;
+        glowMaterial.opacity = 0.4 + intensity * 0.2; // Adjust glow opacity
+        sun.visible = true; // Ensure sun is visible
+        sunGlow.visible = true; // Ensure glow is visible
+        color.setHSL(0.1, 0.8, intensity * 0.6 + 0.4); // Warm colors
+        uniforms.topColor.value.setRGB(0.53, 0.81, 0.92); // Sky blue
+        uniforms.bottomColor.value.setRGB(1, 1, 1); // Horizon white
+      } else if (y < 0 && y > -radius * 0.5) {
+        // Sunset / Sunrise
+        const factor = (y + radius * 0.5) / (radius * 0.5);
+        sunLight.intensity = factor * 2;
+        glowMaterial.opacity = 0.2 + factor * 0.3; // Dim glow
+        sun.visible = true; // Ensure sun is visible during sunset
+        sunGlow.visible = true; // Ensure glow is visible during sunset
+        color.setHSL(0.1 * factor, 0.8, 0.6 * factor + 0.4); // Sunset colors
+        uniforms.topColor.value.setRGB(0.87 * factor, 0.49 * factor, 0.2 * factor); // Warm sunset
+        uniforms.bottomColor.value.setRGB(factor, factor, factor); // Horizon fade
+      } else {
+        // Nighttime
+        sunLight.intensity = 0.1;
+        glowMaterial.opacity = 0.1; // Very dim glow
+        sun.visible = false; // Hide the sun during nighttime
+        sunGlow.visible = false; // Hide the glow during nighttime
+        color.setHSL(0.6, 0.7, 0.3); // Cool, dark blue
+        uniforms.topColor.value.setRGB(0.05, 0.05, 0.2); // Night sky
+        uniforms.bottomColor.value.setRGB(0, 0, 0); // Black horizon
+      }
+      renderer.setClearColor(color);
+
+      // Render the scene
+      renderer.render(scene, camera);
+
+      // Loop the animation
+      requestAnimationFrame(animate);
+    }
+
+    // Start the animation
+    animate();
+  </script>
+  <script>
+    function balloonFly(){
+    // Include GSAP via CDN or npm import
+
+    // Include GSAP via CDN or npm import
+
+
+    // JavaScript code
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    const balloonImages = [
+      './balloon/ballon1.png',
+      './balloon/balloon2.png',
+      './balloon/balloon3.png',
+      './balloon/balloon5.png',
+      './balloon/balloon7.png',
+      './balloon/balooon6.png'
+    ];
+
+    // Create 18 hot air balloon elements dynamically
+    for (let i = 0; i < 10; i++) {
+      const randomImage = balloonImages[Math.floor(Math.random() * balloonImages.length)];
+      const balloon = document.createElement("div");
+      balloon.classList.add("hot-air-balloon");
+      balloon.style.backgroundImage = `url('${randomImage}')`;
+      document.body.appendChild(balloon);
+    }
+
+    // GSAP animation logic
+    const animateBalloon = (balloon) => {
+      const randomX = 100 + Math.random() * screenWidth; // Random x position
+      const randomDelay = Math.random() * 2; // Random delay for natural effect
+      const startY = 0 + Math.random() * 1200; // Random start position between 200px and 800px
+
+      gsap.fromTo(
+        balloon,
+        {
+          x: randomX,
+          y: screenHeight - startY, // Start from a random position within the top half of the screen
+          scale: 0.8, // Slightly smaller size initially
+        },
+        {
+          y: -screenHeight - 1000, // Move out of the screen towards the top
+          duration: 30 + Math.random() * 30, // Random ascent duration
+          delay: randomDelay, // Random delay
+          ease: "power2.out", // Smooth easing for realistic ascent
+          repeat: -1, // Infinite repeat
+          yoyo: false, // No back-and-forth motion
+        }
+      );
+    };
+
+    // Animate each balloon
+    const balloons = document.querySelectorAll(".hot-air-balloon");
+    balloons.forEach((balloon) => {
+      animateBalloon(balloon);
+    });
+
+    // CSS for hot air balloons
+    const style = document.createElement("style");
+    style.textContent = `
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
+    position: relative;
+  }
+  .hot-air-balloon {
+    width: 400px;
+    height: 450px;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index:-1;
+  }
+`;
+    document.head.appendChild(style);
+}
+
+
+
+
+
+    const images = document.querySelectorAll('.hotel');
+    let currentIndex = 0;
+
+    setInterval(() => {
+      images[currentIndex].classList.remove('active'); // Hide current image
+      currentIndex = (currentIndex + 1) % images.length; // Move to the next image
+      if(currentIndex==3){
+        balloonFly()
+      }
+      images[currentIndex].classList.add('active'); // Show next image
+    }, 20000); // Change image every 20 seconds
+
+
+  </script>
+
+  <script>
+    // Array of planes and helicopter with their positions, sizes, and image sources
+    const planes = [
+      {
+        src: "images/plane-removebg-preview.png", // Plane 1
+        position: { bottom: "68%" }, // Bottom position
+        size: 120, // Width in pixels
+        direction: "left-to-right", // Specific animation direction
+      },
+      {
+        src: "images/copter1.gif", // Helicopter
+        position: { bottom: "88%" }, // Start from bottom
+        size: 180, // Width in pixels
+        direction: "random", // Random movement
+        isHelicopter: true, // Flag to identify the helicopter
+      },
+      {
+        src: "images/plane2-removebg-preview.png", // Plane 2
+        position: { top: "10%" }, // Start from top
+        size: 120, // Width in pixels
+        direction: "random",
+      },
+    ];
+
+    // Function to initialize and animate planes and helicopters
+    function initPlanes() {
+      planes.forEach((plane) => {
+        // Create an image element
+        const img = document.createElement("img");
+        img.src = plane.src;
+        img.width = plane.size; // Set the width for the image
+        img.style.position = "absolute"; // Ensure absolute positioning
+
+        // Apply natural position styles
+        Object.assign(img.style, plane.position);
+        document.body.appendChild(img);
+
+        // Start animation based on the direction
+        if (plane.isHelicopter) {
+          animateHelicopter(img, plane);
+        } else if (plane.direction === "left-to-right") {
+          animateLeftToRight(img);
+        } else {
+          animateRandom(img);
+        }
+      });
+    }
+
+    // Function to animate a helicopter with both horizontal and vertical movement
+    function animateHelicopter(img, plane) {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      // If starting from bottom, animate upward
+      const verticalDirection = plane.position.bottom ? 1 : -1; // Up for bottom, down for top
+
+      gsap.fromTo(
+        img,
+        {
+          x: screenWidth + 200, // Start off-screen (left)
+          y: plane.position.bottom ? screenHeight + 200 : -200, // Start from the bottom or top
+        },
+        {
+          x: -200, // End off-screen (right)
+          y: verticalDirection === 1 ? -200 : screenHeight + 200, // Move up or down
+          duration: gsap.utils.random(20, 40), // Random speed
+          ease: "power1.inOut", // Smooth movement
+          repeat: -1, // Infinite loop
+          onRepeat: () => {
+            // Slightly adjust vertical position for natural turbulence
+            const randomOffset = gsap.utils.random(-30, 30); // Random turbulence
+            if (img.style.bottom) {
+              const currentBottom = parseInt(img.style.bottom) || 0;
+              img.style.bottom = `${Math.max(10, currentBottom + randomOffset)}%`; // Keep within screen bounds
+            }
+            if (img.style.top) {
+              const currentTop = parseInt(img.style.top) || 0;
+              img.style.top = `${Math.max(0, currentTop + randomOffset)}%`; // Keep within screen bounds
+            }
+          },
+        }
+      );
+    }
+
+    // Function to animate a plane from left to right
+    function animateLeftToRight(img) {
+      const screenWidth = window.innerWidth;
+
+      gsap.fromTo(
+        img,
+        {
+          x: -200, // Start off-screen (left)
+        },
+        {
+          x: screenWidth + 200, // End off-screen (right)
+          duration: gsap.utils.random(15, 30), // Random speed
+          ease: "power1.inOut", // Smooth movement
+          repeat: -1, // Infinite loop
+          onRepeat: () => {
+            // Keep the plane in its defined vertical position
+          },
+        }
+      );
+    }
+
+    // Function to animate a plane randomly (e.g., right to left with turbulence)
+    function animateRandom(img) {
+      const screenWidth = window.innerWidth;
+
+      gsap.fromTo(
+        img,
+        {
+          x: screenWidth + 200, // Start off-screen (right)
+        },
+        {
+          x: -200, // End off-screen (left)
+          duration: gsap.utils.random(15, 30), // Random speed for each plane
+          ease: "power1.inOut", // Smooth movement
+          repeat: -1, // Infinite loop
+          onRepeat: () => {
+            // Slightly adjust height for natural turbulence
+            const randomOffset = gsap.utils.random(-30, 30); // Random turbulence
+            if (img.style.bottom) {
+              const currentBottom = parseInt(img.style.bottom) || 0;
+              img.style.bottom = `${Math.max(10, currentBottom + randomOffset)}%`; // Keep within screen bounds
+            }
+            if (img.style.top) {
+              const currentTop = parseInt(img.style.top) || 0;
+              img.style.top = `${Math.max(0, currentTop + randomOffset)}%`; // Keep within screen bounds
+            }
+          },
+        }
+      );
+    }
+
+    // Initialize the planes and helicopter
+    initPlanes();
+    const road = document.getElementById("road");
+    const container = document.querySelector(".container");
+
+    // Clone the road image
+    let clonedRoad = road.cloneNode(true);
+    clonedRoad.id = "road2";
+
+    // Append the cloned road to the container
+
+
+
+    // Position the cloned image next to the original
+    //clonedRoad.style.transform = 'rotate(90deg)'; // Optional, uncomment if needed
+    clonedRoad.style.transformOrigin = 'center'; // Ensure rotation occurs around the center
+    clonedRoad.style.height = '150px';
+    clonedRoad.style.position = 'absolute';
+    clonedRoad.style.bottom = '-40px';
+    clonedRoad.style.width = '100%';
+    clonedRoad.style.zIndex = '1';
+
+
+    clonedRoad.style.left = "100vw"; // Place it to the right of the original
+    container.appendChild(clonedRoad);
+
+    // GSAP animation for infinite scroll
+    gsap.timeline({ repeat: -1 }) // Repeat indefinitely
+      .to("#road", {
+        x: "-30vw", // Move the first image to the left by its full width
+        duration: 10, // Adjust speed of scrolling
+        ease: "linear" // Smooth, consistent scrolling
+      })
+      .to("#road2", {
+        x: "-30vw", // Move the second image to the left by its full width
+        duration: 10, // Match the duration of the first image
+        ease: "linear"
+      }, 0); // Start both animations at the same time
+  </script>
+
+  </script>
+</body>
+
+</html>
